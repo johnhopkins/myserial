@@ -14,7 +14,7 @@ This project relies on the external libserialport library
 
 ### Installing
 
-First of all download the libserialport library an compile for your machine
+First of all download the libserialport library and compile for your machine
 
 once installed you can run the make file of myserial to create a commandline executable called myserial
 
@@ -22,19 +22,19 @@ you can then run myserial using the complete path or ./myserial
 
 ## Running myserial 
 
-On running myserial you will be shown a list of valid serial bus ports
+On running myserial you will be shown a list of valid serial bus ports available on your system
 
-Select the relevant number for the port you wish to read
+Select the relevant number for the port whose serial data you wish to read
 
-You will then be asked to set the baud rate of the port, any board rate can be entered here as long as it is the same as the serial bus transmitter
+You will then be asked to set the baud rate of the port, any board rate can be entered here as long as it is the same as the serial bus transmitter, standard rate would be something like 9600. baud rates of upto 2,000,000 have been tested, though for some reason unbeknow to me at this time rates lower than 300bps seem to have issues.
 
 ## Deployment
 
-This has been tested on mac os x only. It should work on other machines however no tests have yet been performed
+This has been tested on mac osX only. It should work on other machines however no tests have yet been performed on other systems at the time of writing
 
 ## Built With
 
-* [GCC](http://gcc.gnu.org) - The compiler used
+* [GCC](http://gcc.gnu.org) - The gcc compiler 
 
 ## Contributing
 
@@ -56,5 +56,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Thanks to sigrok for the excellent library, without which none of this would have been possible 
+* Thanks to sigrok for the excellent libserialport library, without which none of this would have been possible 
 * Thanks too to the Arduino project, that got me interested in this kind of thing 
