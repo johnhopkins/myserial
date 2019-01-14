@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <libserialport.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 //declare global variables
 
@@ -24,7 +25,9 @@ int main(void) {
 	printf("Select port with num key: ");
 	scanf("%d", &selected_port);
 	//assign selected_port variable with string of port
-	printf("You have chosen to use port %s\n", sp_get_port_name(ports[selected_port]));
+	printf("You have chosen to use port %s %s %s\n", sp_get_port_name(ports[selected_port]), 
+		sp_get_port_usb_manufacturer(ports[selected_port]),
+			sp_get_port_description(ports[selected_port]));
 	port_to_use = sp_get_port_name(ports[selected_port]);
 	//enter baud rate to communicate
 	printf("Enter baud rate: ");
@@ -34,35 +37,7 @@ int main(void) {
 	return 0;
 }
 
-void parse_serial_data(char *byte_buffer, int byte_number) {
-	//parses serial data by reading ascii values from the buffer and printing to stdio as char
-	for (int i = 0; i < byte_number; i++){
-		printf("%c", byte_buffer[i]);
-	}
-}
-
-struct sp_port** list_ports(void) {
-	//returns an array of pointers of ports available on system. Otherwise returns error 0 
-	int i;
-	//local decleration of structure to hold array
-	struct sp_port **ports;
-	//library function call to populate local array of structures
-	enum sp_return error = sp_list_ports(&ports);
-	//error checking to ensure nothing has gone wrong with the above function call
-	if (error == SP_OK) {
-		for (i = 0; ports[i]; i++) {
-			//print all found ports on local system
-			printf("Found port [%d]: '%s'\n", i, sp_get_port_name(ports[i]));
-		}
-		//return array of pointers to ports found and free the ports
-		return ports;
-		sp_free_port_list(ports);
-	} else {
-		//if no ports found or there is an error let user know
-		printf("No serial devices detected\n");
-	}
-	return 0;
-}
+//open port function
 
 void open_port(char * port_to_use, struct sp_port *port, int baudrate) {
 	//open port and return error if there is an issue
@@ -99,3 +74,38 @@ void open_port(char * port_to_use, struct sp_port *port, int baudrate) {
 		printf("Error finding serial device\n");
 	}
 }
+
+//list ports function
+
+struct sp_port** list_ports(void) {
+	//returns an array of pointers of ports available on system. Otherwise returns error 0 
+	int i;
+	//local decleration of structure to hold array
+	struct sp_port **ports;
+	//library function call to populate local array of structures
+	enum sp_return error = sp_list_ports(&ports);
+	//error checking to ensure nothing has gone wrong with the above function call
+	if (error == SP_OK) {
+		for (i = 0; ports[i]; i++) {
+			//print all found ports on local system
+			printf("Found port [%d]: '%s'\n", i, sp_get_port_name(ports[i]));
+		}
+		//return array of pointers to ports found and free the ports
+		return ports;
+		sp_free_port_list(ports);
+	} else {
+		//if no ports found or there is an error let user know
+		printf("No serial devices detected\n");
+	}
+	return 0;
+}
+
+//parse serial data function
+
+void parse_serial_data(char *byte_buffer, int byte_number) {
+	//parses serial data by reading ascii values from the buffer and printing to stdio as char
+	for (int i = 0; i < byte_number; i++){
+		printf("%c", byte_buffer[i]);
+	}
+}
+
