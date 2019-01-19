@@ -38,11 +38,11 @@ int main(void) {
 }
 
 void write_serial(void) {
-		while(1) {
-			char buffer[] = "";
-			scanf("%s", buffer);
-			sp_nonblocking_write(port, buffer, 100);
-		}
+	while(1) {
+		char buffer[] = "";
+		scanf("%s", buffer);
+		sp_nonblocking_write(port, buffer, 100);
+	}
 }
 
 void read_serial(void) {
