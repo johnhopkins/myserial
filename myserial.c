@@ -4,7 +4,7 @@
 struct sp_port *port;
 struct sp_port **ports;
 
-void open_port(char *port_to_use, int baudrate);
+void open_port_to_read(char *port_to_use, int baudrate);
 void open_port_to_write(char *port_to_use, int baudrate);
 void parse_serial_data(char *byte_buffer, int byte_number); 
 void write_serial(void);
@@ -24,7 +24,7 @@ int main(void) {
 	scanf("%d", &readwrite);
 
 	if (readwrite == 0) {
-		open_port(sp_get_port_name(ports[selected_port]), baudrate);
+		open_port_to_read(sp_get_port_name(ports[selected_port]), baudrate);
 		read_serial();
 	}
 
@@ -67,7 +67,7 @@ void open_port_to_write(char *port_to_use, int baudrate) {
 	}
 }
 
-void open_port(char *port_to_use, int baudrate) {
+void open_port_to_read(char *port_to_use, int baudrate) {
 	enum sp_return error = sp_get_port_by_name(port_to_use, &port);
 	if (error == SP_OK) {
 		error = sp_open(port, SP_MODE_READ);
