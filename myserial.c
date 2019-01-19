@@ -7,41 +7,54 @@ struct sp_port **ports;
 void open_port(char *port_to_use, int baudrate);
 void open_port_to_write(char *port_to_use, int baudrate);
 void parse_serial_data(char *byte_buffer, int byte_number); 
+void write_serial(void);
+void read_serial(void);
 void print_list_ports(void);
 
 int main(void) {
 	sp_list_ports(&ports);
 	print_list_ports();
 
-	int selected_port, baudrate;
+	int selected_port, baudrate, readwrite;
 	printf("Select port to use: ");
 	scanf("%d", &selected_port);
 	printf("Enter baudrate to use: ");
 	scanf("%d", &baudrate);
+	printf("Would you like to read[0] or write[1] serial data?: ");
+	scanf("%d", &readwrite);
 
+	if (readwrite == 0) {
+		open_port(sp_get_port_name(ports[selected_port]), baudrate);
+		read_serial();
+	}
 
-	open_port_to_write(sp_get_port_name(ports[selected_port]), baudrate);
-	
-	char * buffer = "John Hopkins\n";
-	
-	sp_nonblocking_write(port, buffer, 13);
+	if (readwrite == 1) {
+		open_port_to_write(sp_get_port_name(ports[selected_port]), baudrate);
+		write_serial();
+	}
+    sp_close(port);
 
-	
-
-	//open_port(sp_get_port_name(ports[selected_port]), baudrate);
-
-    //while(1) {
-     //   int bytes_waiting = sp_input_waiting(port);
-      //  if (bytes_waiting > 0) {
-       //     char byte_buffer[512];
-        //    int byte_number = sp_nonblocking_read(port, byte_buffer, 500);
-         //   parse_serial_data(byte_buffer, byte_number);
-        //}
-        //fflush(stdout);
-    //}
-    //sp_close(port);
-	
 	return 0;
+}
+
+void write_serial(void) {
+		while(1) {
+			char buffer[] = "";
+			scanf("%s", buffer);
+			sp_nonblocking_write(port, buffer, 100);
+		}
+}
+
+void read_serial(void) {
+    while(1) {
+        int bytes_waiting = sp_input_waiting(port);
+        if (bytes_waiting > 0) {
+            char byte_buffer[512];
+            int byte_number = sp_nonblocking_read(port, byte_buffer, 500);
+            parse_serial_data(byte_buffer, byte_number);
+        }
+        fflush(stdout);
+    }
 }
 
 void open_port_to_write(char *port_to_use, int baudrate) {
