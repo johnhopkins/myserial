@@ -5,6 +5,7 @@ struct sp_port *port;
 struct sp_port **ports;
 
 void open_port(char *port_to_use, int baudrate);
+void open_port_to_write(char *port_to_use, int baudrate);
 void parse_serial_data(char *byte_buffer, int byte_number); 
 void print_list_ports(void);
 
@@ -18,20 +19,39 @@ int main(void) {
 	printf("Enter baudrate to use: ");
 	scanf("%d", &baudrate);
 
-	open_port(sp_get_port_name(ports[selected_port]), baudrate);
 
-    while(1) {
-        int bytes_waiting = sp_input_waiting(port);
-        if (bytes_waiting > 0) {
-            char byte_buffer[512];
-            int byte_number = sp_nonblocking_read(port, byte_buffer, 512);
-            parse_serial_data(byte_buffer, byte_number);
-        }
-        fflush(stdout);
-    }
-    sp_close(port);
+	open_port_to_write(sp_get_port_name(ports[selected_port]), baudrate);
+	
+	char * buffer = "John Hopkins\n";
+	
+	sp_nonblocking_write(port, buffer, 13);
+
+	
+
+	//open_port(sp_get_port_name(ports[selected_port]), baudrate);
+
+    //while(1) {
+     //   int bytes_waiting = sp_input_waiting(port);
+      //  if (bytes_waiting > 0) {
+       //     char byte_buffer[512];
+        //    int byte_number = sp_nonblocking_read(port, byte_buffer, 500);
+         //   parse_serial_data(byte_buffer, byte_number);
+        //}
+        //fflush(stdout);
+    //}
+    //sp_close(port);
 	
 	return 0;
+}
+
+void open_port_to_write(char *port_to_use, int baudrate) {
+	enum sp_return error = sp_get_port_by_name(port_to_use, &port);
+	if (error == SP_OK) {
+		error = sp_open(port, SP_MODE_WRITE);
+		if (error == SP_OK) {
+			sp_set_baudrate(port, baudrate);
+		}
+	}
 }
 
 void open_port(char *port_to_use, int baudrate) {
